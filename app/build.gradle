@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.application'
+}
+
+def buildNo = (System.getenv('GITHUB_RUN_NUMBER') ?: '1') as Integer
+
+android {
+    namespace 'vn.vicanhan.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'vn.vicanhan.app'
+        minSdk 24
+        targetSdk 34
+        versionCode buildNo
+        versionName "v${buildNo}"
+    }
+
+    // Khóa ký cố định: mọi bản build đều cùng chữ ký nên cài đè được, không cần gỡ app cũ
+    signingConfigs {
+        yun {
+            storeFile file('yun0213.keystore')
+            storePassword 'yun0213pass'
+            keyAlias 'yun0213'
+            keyPassword 'yun0213pass'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.yun
+        }
+        debug {
+            signingConfig signingConfigs.yun
+        }
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

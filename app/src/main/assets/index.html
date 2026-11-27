@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="vi" data-th="gold">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Ví yun0213</title>
+<style>
+/* VOICE: sang trọng, kín đáo như thẻ ngân hàng hạng VIP. IDEA: thẻ kim loại, chủ thẻ tự chọn màu và hình nền.
+   PICTURE: thẻ số dư có chip, tên chủ thẻ dập nổi. COLOUR: đen than + kim loại (vàng, bạch kim...), xanh ngọc thu, hồng đỏ chi.
+   TYPE: font hệ thống, số lớn đậm. LAYOUT: một cột, thẻ trên cùng, nút thêm nổi. */
+:root{color-scheme:dark;--bg:#0a0a0c;--card:rgba(20,20,23,.86);--card2:rgba(31,31,36,.9);--ink:#f3efe6;--mute:#a29c90;--line:rgba(255,255,255,.08);
+--gold:#d6b46a;--gold2:#f4e2a8;--goldg:linear-gradient(135deg,#a8823c 0%,#f4e2a8 38%,#d6b46a 60%,#8f6c2c 100%);--aink:#1a1408;
+--cardbg:linear-gradient(140deg,#2a2a2f 0%,#151518 42%,#0e0e10 60%,#26252a 100%);--in:#4fd1a1;--out:#ff7d7d;--chip:rgba(255,255,255,.06);--dim:.6;--bgimg:none}
+:root[data-th=platinum]{--gold:#cdd3dc;--gold2:#f3f6fa;--goldg:linear-gradient(135deg,#7d848f 0%,#f3f6fa 38%,#c3c9d2 60%,#666c76 100%);--aink:#14161a;--cardbg:linear-gradient(140deg,#4a4e57 0%,#25272c 45%,#17181b 62%,#3b3e45 100%)}
+:root[data-th=emerald]{--cardbg:linear-gradient(140deg,#13594a 0%,#0a3029 45%,#061c18 62%,#0f4a3e 100%)}
+:root[data-th=ruby]{--cardbg:linear-gradient(140deg,#6b1428 0%,#3a0a16 45%,#21050c 62%,#5a1022 100%)}
+:root[data-th=sapphire]{--gold:#cdd3dc;--gold2:#eef3fb;--goldg:linear-gradient(135deg,#7d848f 0%,#eef3fb 38%,#c3c9d2 60%,#666c76 100%);--aink:#101626;--cardbg:linear-gradient(140deg,#1d3f8a 0%,#0e2152 45%,#081332 62%,#183577 100%)}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);font:16px/1.45 -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;padding-bottom:100px;min-height:100vh;
+background:radial-gradient(120% 50% at 50% 0%,#1d1a14 0%,transparent 70%)}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(10,10,12,var(--dim)),rgba(10,10,12,calc(var(--dim) + .15))),var(--bgimg) center/cover no-repeat,var(--bg)}
+button,input,select{font:inherit;color:inherit}
+.top{padding:16px 16px 6px}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}
+.brand{font-size:20px;font-weight:700;background:var(--goldg);-webkit-background-clip:text;background-clip:text;color:transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.icons{display:flex;gap:8px;flex:none}
+.iconbtn{width:44px;height:44px;display:grid;place-items:center;background:rgba(0,0,0,.35);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);color:var(--gold2);border-radius:13px;padding:0}
+.iconbtn svg{width:22px;height:22px}
+.vip{position:relative;overflow:hidden;border-radius:22px;padding:20px 20px 18px;aspect-ratio:1.586;max-height:260px;width:100%;display:flex;flex-direction:column;
+background:var(--cardbg);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);box-shadow:0 18px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.1)}
+.vip::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.02) 0 2px,transparent 2px 6px);pointer-events:none}
+.vip::after{content:"";position:absolute;width:260px;height:260px;right:-90px;top:-120px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 65%);pointer-events:none}
+.vip>*{position:relative;z-index:1}
+.vip-row{display:flex;justify-content:space-between;align-items:center}
+.tier{font-size:13px;font-weight:800;letter-spacing:3px;background:var(--goldg);-webkit-background-clip:text;background-clip:text;color:transparent}
+.chipsvg{width:44px;height:34px}
+.bal{margin-top:6px;font-size:13px;color:rgba(255,255,255,.65)}
+.big{font-size:clamp(28px,9vw,40px);font-weight:700;letter-spacing:-.5px;white-space:nowrap;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.name{margin-top:auto;font-size:15px;font-weight:700;letter-spacing:2px;color:var(--gold2);text-shadow:0 1px 0 rgba(0,0,0,.9),0 -1px 0 rgba(255,255,255,.15);text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wrap{padding:14px 14px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:14px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card2);border-radius:14px;padding:12px}
+.stat small{display:block;color:var(--mute);font-size:13px}
+.stat b{font-size:18px;white-space:nowrap}
+.in{color:var(--in)}.out{color:var(--out)}
+h2{font-size:16px;margin:0 0 12px;color:var(--gold2);font-weight:600;display:flex;justify-content:space-between;gap:8px}
+h2 small{color:var(--mute);font-weight:400;font-size:13px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--chip);border-radius:14px;padding:4px;gap:4px;margin-bottom:12px}
+.seg button{border:0;background:none;border-radius:10px;min-height:40px;font-weight:600;color:var(--mute)}
+.seg button.on{background:var(--goldg);color:var(--aink)}
+.dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:13px;color:var(--mute);display:block}
+input,select{width:100%;border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:11px 12px;font-size:16px;min-height:46px;margin-top:4px}
+input:focus,select:focus{outline:2px solid var(--gold);border-color:transparent}
+input[type=range]{padding:0;min-height:36px;accent-color:var(--gold);background:none;border:0}
+.pre{display:flex;gap:8px;overflow-x:auto;margin:12px -2px 0;padding:2px}
+.pre button{flex:none;border:1px solid var(--line);background:var(--card2);border-radius:20px;padding:7px 13px;font-size:14px;min-height:38px}
+.pre button.on{border-color:var(--gold);color:var(--gold2);background:color-mix(in srgb,var(--gold) 14%,transparent)}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.sum small{display:block;font-size:12px;color:var(--mute)}.sum b{font-size:15px;white-space:nowrap}
+.bar2{margin-top:10px}.bar2 div{display:flex;justify-content:space-between;font-size:14px;gap:8px}
+.bar2 i,.meter{display:block;height:8px;border-radius:4px;background:var(--chip);margin-top:4px;overflow:hidden}
+.bar2 i span,.meter span{display:block;height:100%;background:var(--goldg);border-radius:4px}
+.meter{height:10px;margin:10px 0 8px}.meter.warn span{background:linear-gradient(90deg,#c9772c,#ffb35c)}.meter.over span{background:linear-gradient(90deg,#b8323f,#ff7d7d)}
+.bline{display:flex;justify-content:space-between;font-size:14px;gap:8px;flex-wrap:wrap}
+.chart{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;align-items:end;height:150px;padding-top:6px}
+.col{display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:6px;cursor:pointer;border-radius:10px;padding-top:4px}
+.col.on{background:var(--chip)}
+.bars{display:flex;gap:3px;align-items:flex-end;height:100%;width:100%;justify-content:center}
+.bars i{width:min(14px,40%);border-radius:4px 4px 2px 2px;min-height:2px}
+.bars .bi{background:var(--in)}.bars .bo{background:var(--out)}
+.col small{font-size:12px;color:var(--mute)}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--mute);margin-top:10px;flex-wrap:wrap}
+.legend b{color:var(--ink)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+.day{font-size:13px;color:var(--mute);margin:16px 4px 6px;display:flex;justify-content:space-between}
+.item{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.item:last-child{border:0}
+.ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;font-size:20px}
+.acc{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line);cursor:pointer}
+.acc:last-of-type{border:0}
+.acc .t{flex:1}.acc .t b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.acc .t small{display:block;color:var(--mute);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acc .a{font-weight:700;white-space:nowrap}
+.badge{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none;font-size:13px;font-weight:800;color:#fff;letter-spacing:.3px;box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+.addacc{margin-top:10px;width:100%;border:1px dashed color-mix(in srgb,var(--gold) 50%,transparent);background:none;color:var(--gold2);border-radius:14px;min-height:46px;font-weight:600}
+.accpick button{display:inline-flex;align-items:center;gap:6px}
+.accpick i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.ic.tr{background:color-mix(in srgb,var(--gold) 14%,transparent)}.a.tr{color:var(--gold2)}
+.ic.in{background:rgba(79,209,161,.13)}.ic.out{background:rgba(255,125,125,.13)}
+.item .t{flex:1}.item .t b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .t small{color:var(--mute);font-size:13px}
+.item .a{font-weight:700;white-space:nowrap}
+.search{margin:-2px 0 4px}
+.empty{text-align:center;color:var(--mute);padding:28px 10px}
+.fab{position:fixed;right:18px;bottom:22px;background:var(--goldg);color:var(--aink);border:0;border-radius:18px;padding:0 22px;height:58px;font-size:17px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.6);z-index:5}
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:flex-end;z-index:9}
+.mask.show{display:flex}
+.sheet{background:#141417;border-top:1px solid color-mix(in srgb,var(--gold) 40%,transparent);width:100%;border-radius:24px 24px 0 0;padding:18px 16px 28px;max-height:92vh;overflow-y:auto;animation:up .2s ease}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet h3{margin:0 0 14px;font-size:18px;display:flex;justify-content:space-between;align-items:center;color:var(--gold2)}
+.sheet h4{margin:20px 0 8px;font-size:14px;color:var(--gold2);font-weight:600}
+.x{border:0;background:var(--chip);border-radius:10px;width:40px;height:40px;font-size:20px}
+.typ{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.typ button{border:2px solid var(--line);background:none;border-radius:14px;min-height:50px;font-weight:700;color:var(--mute)}
+.typ button.on.in{border-color:var(--in);color:var(--in);background:rgba(79,209,161,.08)}
+.typ button.on.tr{border-color:var(--gold);color:var(--gold2);background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.typ button.on.out{border-color:var(--out);color:var(--out);background:rgba(255,125,125,.08)}
+.amt{font-size:28px;font-weight:700;text-align:right}
+.cats{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.cats button{border:1px solid var(--line);background:var(--card2);border-radius:20px;padding:7px 12px;font-size:14px;min-height:38px}
+.cats button.on{border-color:var(--gold);color:var(--gold2);background:color-mix(in srgb,var(--gold) 14%,transparent)}
+.f{margin-bottom:12px}
+.act{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:6px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{border:0;border-radius:14px;min-height:50px;font-weight:700;font-size:15px;width:100%}
+.btn.p{background:var(--goldg);color:var(--aink)}.btn.d{background:rgba(255,125,125,.12);color:var(--out)}.btn.g{background:var(--chip);border:1px solid var(--line)}
+.sw{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.sw button{width:100%;aspect-ratio:1.586;border-radius:10px;border:2px solid transparent;padding:0;position:relative}
+.sw button.on{border-color:#fff}
+.sw span{display:block;font-size:11px;color:var(--mute);text-align:center;margin-top:4px}
+.bgprev{height:90px;border-radius:14px;border:1px dashed var(--line);background:center/cover no-repeat var(--card2);display:grid;place-items:center;color:var(--mute);font-size:13px;margin-bottom:10px}
+textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:12px;padding:10px;font:13px monospace;background:var(--card2);color:var(--ink)}
+.toast{position:fixed;left:14px;right:14px;bottom:92px;background:#222127;border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);color:#fff;border-radius:14px;padding:12px 14px;display:none;justify-content:space-between;align-items:center;z-index:40}
+.toast.show{display:flex}.toast button{background:none;border:0;color:var(--gold2);font-weight:700;min-height:36px}
+.note{font-size:13px;color:var(--mute);margin:8px 0}
+.lock,.splash{position:fixed;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;
+background:radial-gradient(90% 60% at 50% 30%,#221e16,#0a0a0c 70%)}
+.lock.show,.splash.show{display:flex}
+.splash .brand{font-size:34px}
+.splash .name,.lock .name{margin:0;font-size:14px;flex:none}
+.splash{transition:opacity .35s}.splash.fade{opacity:0}
+.dots{display:flex;gap:16px;margin:18px 0 8px}
+.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--gold)}
+.dots i.f{background:var(--gold)}
+.dots.err{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pad{display:grid;grid-template-columns:repeat(3,72px);gap:14px;margin-top:10px}
+.pad button{height:72px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:26px;font-weight:600}
+.pad button:active{background:color-mix(in srgb,var(--gold) 25%,transparent)}
+.pad .ghost{border:0;background:none;font-size:15px;color:var(--mute)}
+.biobtn{display:flex;align-items:center;gap:10px;margin-top:16px;background:color-mix(in srgb,var(--gold) 12%,transparent);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);color:var(--gold2);border-radius:16px;padding:0 18px;min-height:52px;font-weight:600}
+.biobtn svg{width:26px;height:26px}
+.biobtn[hidden]{display:none}
+.forgot{background:none;border:0;color:var(--mute);font-size:14px;min-height:44px;margin-top:6px;text-decoration:underline}
+.lockmsg{color:var(--mute);font-size:15px;min-height:22px}
+@media(prefers-reduced-motion:reduce){.sheet,.dots.err{animation:none}.splash{transition:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="bar">
+    <div class="brand" id="brand">Ví yun0213</div>
+    <div class="icons">
+      <button class="iconbtn" id="eyeBtn" aria-label="Ẩn hoặc hiện số tiền"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path id="eyeP" d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle id="eyeC" cx="12" cy="12" r="3"/><path id="eyeS" d="M4 4l16 16" style="display:none"/></svg></button>
+      <button class="iconbtn" id="setBtn" aria-label="Cài đặt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
+  </div>
+  <div class="vip">
+    <div class="vip-row">
+      <span class="tier">VIP</span>
+      <svg class="chipsvg" viewBox="0 0 44 34" aria-hidden="true"><defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4e2a8"/><stop offset=".5" stop-color="#c9a45c"/><stop offset="1" stop-color="#8f6c2c"/></linearGradient></defs><rect x="1" y="1" width="42" height="32" rx="6" fill="url(#cg)"/><path d="M1 12h13M1 22h13M30 12h13M30 22h13M14 1v32M30 1v32M14 17h16" stroke="#6b5020" stroke-opacity=".55" stroke-width="1.2" fill="none"/></svg>
+    </div>
+    <div class="name" id="owner">NGUYỄN ANH DŨNG</div>
+    <div class="bal" id="balLbl">Số dư còn lại</div>
+    <div class="big" id="balance">0 ₫</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card two">
+    <div class="stat"><small>Tổng tiền vào</small><b class="in" id="totIn">0 ₫</b></div>
+    <div class="stat"><small>Tổng chi ra</small><b class="out" id="totOut">0 ₫</b></div>
+  </section>
+
+  <section class="card">
+    <h2><span>Tài khoản</span><small id="accCount"></small></h2>
+    <div id="accList"></div>
+    <button class="addacc" id="accAdd">+ Thêm tài khoản ngân hàng / ví</button>
+  </section>
+
+  <section class="card" id="budgetCard" hidden>
+    <h2><span id="budgetTitle">Ngân sách tháng</span><small id="budgetDays"></small></h2>
+    <div class="bline"><span>Đã chi <b id="bSpent">0</b></span><span>Hạn mức <b id="bLimit">0</b></span></div>
+    <div class="meter" id="bMeter"><span id="bFill"></span></div>
+    <div class="note" id="bNote" style="margin:0"></div>
+  </section>
+
+  <section class="card">
+    <h2>Lọc theo ngày</h2>
+    <div class="seg" id="seg">
+      <button data-v="all" class="on">Tất cả</button>
+      <button data-v="out">Khoản chi</button>
+      <button data-v="in">Khoản thu</button>
+    </div>
+    <label style="margin-bottom:10px">Tài khoản<select id="accF"></select></label>
+    <div class="dates">
+      <label>Từ ngày<input type="date" id="from"></label>
+      <label>Đến ngày<input type="date" id="to"></label>
+    </div>
+    <div class="pre" id="pre">
+      <button data-p="today">Hôm nay</button>
+      <button data-p="7">7 ngày</button>
+      <button data-p="month">Tháng này</button>
+      <button data-p="last">Tháng trước</button>
+      <button data-p="year">Năm nay</button>
+      <button data-p="all">Tất cả</button>
+    </div>
+    <div class="sum">
+      <div><small>Thu trong kỳ</small><b class="in" id="pIn">0</b></div>
+      <div><small>Chi trong kỳ</small><b class="out" id="pOut">0</b></div>
+      <div><small>Chênh lệch</small><b id="pDiff">0</b></div>
+    </div>
+    <div id="cats"></div>
+  </section>
+
+  <section class="card">
+    <h2>Thu chi 6 tháng <small>Chạm cột để xem tháng đó</small></h2>
+    <div class="chart" id="chart"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="card">
+    <h2 id="listTitle">Giao dịch</h2>
+    <input class="search" id="q" type="search" placeholder="Tìm theo ghi chú, danh mục, nguồn tiền" autocomplete="off">
+    <div id="list"></div>
+  </section>
+</main>
+
+<button class="fab" id="addBtn">+ Thêm</button>
+
+<!-- Thêm / sửa giao dịch -->
+<div class="mask" id="formMask">
+  <form class="sheet" id="form">
+    <h3><span id="formTitle">Thêm giao dịch</span><button type="button" class="x" data-close>×</button></h3>
+    <div class="typ" id="typ">
+      <button type="button" data-t="in" class="in">Tiền vào</button>
+      <button type="button" data-t="out" class="out on">Chi ra</button>
+      <button type="button" data-t="tr" class="tr">Chuyển tiền</button>
+    </div>
+    <div class="f"><label>Số tiền (₫)<input id="amt" class="amt" inputmode="numeric" autocomplete="off" placeholder="0"></label></div>
+    <div class="f"><label id="accLbl">Trả bằng</label><div class="cats accpick" id="accPick"></div></div>
+    <div class="f" id="toRow"><label>Chuyển đến</label><div class="cats accpick" id="toPick"></div></div>
+    <div class="f" id="catRow"><label>Danh mục</label><div class="cats" id="catPick"></div></div>
+    <div class="f" id="srcRow"><label>Nguồn tiền (nhận từ ai / từ đâu)<input id="src" list="srcList" maxlength="40" autocomplete="off" placeholder="Ví dụ: Công ty ABC, khách hàng, gia đình…"></label><datalist id="srcList"></datalist></div>
+    <div class="f"><label>Ghi chú<input id="note" maxlength="80" placeholder="Ví dụ: cà phê sáng"></label></div>
+    <div class="f"><label>Ngày<input type="date" id="date"></label></div>
+    <div class="act">
+      <button type="button" class="btn d" id="delBtn">Xóa</button>
+      <button type="submit" class="btn p">Lưu</button>
+    </div>
+  </form>
+</div>
+
+<!-- Cài đặt -->
+<div class="mask" id="setMask">
+  <div class="sheet">
+    <h3><span>Cài đặt</span><button type="button" class="x" data-close>×</button></h3>
+    <div class="f"><label>Tên người dùng (hiện trên thẻ)<input id="sOwner" maxlength="28" placeholder="Nhập tên của bạn"></label></div>
+
+    <h4>Màu thẻ</h4>
+    <div class="sw" id="sw"></div>
+
+    <h4>Hình nền</h4>
+    <div class="bgprev" id="bgPrev">Chưa chọn hình nền</div>
+    <div class="row2">
+      <button class="btn p" id="bgPick">Chọn ảnh</button>
+      <button class="btn g" id="bgClear">Bỏ hình nền</button>
+    </div>
+    <input type="file" id="bgFile" accept="image/*" hidden>
+    <label style="margin-top:10px">Độ tối của hình nền (giúp chữ dễ đọc)<input type="range" id="bgDim" min="20" max="90" step="5"></label>
+
+    <h4>Ngân sách chi mỗi tháng</h4>
+    <div class="f"><label>Hạn mức (₫), để trống nếu không dùng<input id="sBudget" inputmode="numeric" placeholder="Ví dụ: 5.000.000"></label></div>
+
+    <h4>Bảo mật</h4>
+    <p class="note" id="pinState"></p>
+    <div class="row2" id="secRow">
+      <button class="btn p" id="pinSet">Đổi mật khẩu</button>
+      <button class="btn g" id="bioToggle">Bật vân tay</button>
+    </div>
+
+    <h4>Dữ liệu</h4>
+    <button class="btn g" id="bkOpen">Sao lưu &amp; khôi phục</button>
+    <p class="note ver" style="text-align:center;margin-top:18px"></p>
+  </div>
+</div>
+
+<!-- Tài khoản -->
+<div class="mask" id="accMask">
+  <form class="sheet" id="accForm">
+    <h3><span id="accTitle">Thêm tài khoản</span><button type="button" class="x" data-close>×</button></h3>
+    <div class="f"><label>Ngân hàng / loại ví<select id="aBank"></select></label></div>
+    <div class="f"><label>Tên hiển thị<input id="aName" maxlength="30" placeholder="Ví dụ: Vietcombank lương"></label></div>
+    <div class="f"><label>4 số cuối tài khoản (không bắt buộc)<input id="aLast" inputmode="numeric" maxlength="4" placeholder="1234"></label></div>
+    <div class="f"><label id="aBalLbl">Số dư hiện tại (₫)<input id="aBal" class="amt" inputmode="numeric" placeholder="0"></label></div>
+    <p class="note" id="aHint">Xem số dư trong app ngân hàng rồi nhập vào đây. Từ giờ app tự cộng trừ theo các khoản thu chi.</p>
+    <div class="act">
+      <button type="button" class="btn d" id="aDel">Xóa</button>
+      <button type="submit" class="btn p">Lưu</button>
+    </div>
+  </form>
+</div>
+
+<!-- Sao lưu -->
+<div class="mask" id="bkMask">
+  <div class="sheet">
+    <h3><span>Sao lưu &amp; khôi phục</span><button type="button" class="x" data-close>×</button></h3>
+    <p class="note">Dữ liệu chỉ lưu trong máy. Nên sao lưu định kỳ (gửi qua Zalo, Gmail, Drive…) để không mất khi đổi máy hoặc gỡ app.</p>
+    <button class="btn p" id="shareBtn">Gửi bản sao lưu</button>
+    <p class="note">Khôi phục: dán nội dung bản sao lưu vào ô dưới.</p>
+    <textarea id="bkText" placeholder="Dán bản sao lưu vào đây"></textarea>
+    <div class="act"><button class="btn g" id="copyBtn">Chép</button><button class="btn p" id="restoreBtn">Khôi phục</button></div>
+  </div>
+</div>
+
+<!-- Màn hình chào -->
+<div class="splash show" id="splash">
+  <div class="brand" id="spBrand">Ví yun0213</div>
+  <div class="name" id="spOwner">NGUYỄN ANH DŨNG</div>
+  <div class="note ver"></div>
+</div>
+
+<!-- Khóa PIN -->
+<div class="lock" id="lock">
+  <div class="brand" id="lkBrand" style="font-size:26px">Ví yun0213</div>
+  <div class="name" id="lkOwner">NGUYỄN ANH DŨNG</div>
+  <div class="dots" id="dots"></div>
+  <div class="lockmsg" id="lockMsg">Nhập mật khẩu</div>
+  <div class="pad" id="pad">
+    <button>1</button><button>2</button><button>3</button>
+    <button>4</button><button>5</button><button>6</button>
+    <button>7</button><button>8</button><button>9</button>
+    <button class="ghost" data-k="cancel" id="padCancel">Hủy</button><button>0</button><button class="ghost" data-k="del">Xóa</button>
+  </div>
+  <button class="biobtn" id="bioBtn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M7.5 4.6A8 8 0 0 1 20 11v1.5"/><path d="M4 9.5a8 8 0 0 1 1.4-2.7"/><path d="M4 13v-1a8 8 0 0 1 .1-1"/><path d="M8 20a14 14 0 0 1-1.5-6.5V12a5.5 5.5 0 0 1 11 0v1"/><path d="M12 12v2a13 13 0 0 0 2.2 7"/><path d="M9.3 16.5A16 16 0 0 0 11 21"/><path d="M17.5 16a18 18 0 0 1-.6 4"/></svg><span>Mở bằng vân tay</span></button>
+  <button class="ghost forgot" id="forgot">Quên mật khẩu?</button>
+  <p class="note" id="forgotMsg" hidden style="max-width:320px;text-align:center">Mật khẩu không lấy lại được, vì dữ liệu chỉ nằm trong máy. Cách duy nhất: gỡ app, cài lại, rồi khôi phục từ bản sao lưu đã gửi qua LINE/Zalo.</p>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="undoBtn">Hoàn tác</button></div>
+
+<script>
+{
+const KEY = 'vicanhan.v1';
+const CATS = {
+  out: [['Ăn uống','🍜'],['Đi lại','⛽'],['Mua sắm','🛍️'],['Hóa đơn','🧾'],['Nhà cửa','🏠'],['Sức khỏe','💊'],['Giải trí','🎬'],['Học tập','📚'],['Gia đình','👪'],['Khác','📌']],
+  in: [['Lương','💼'],['Thưởng','🎁'],['Bán hàng','🏪'],['Được cho','💝'],['Lãi','📈'],['Khác','💰']]
+};
+const BANKS = ['Tiền mặt','Vietcombank','VietinBank','BIDV','Agribank','Techcombank','MB Bank','ACB','VPBank','TPBank','Sacombank','VIB','HDBank','SHB','OCB','SeABank','LPBank','MSB','Nam A Bank','Ví MoMo','Ví ZaloPay','Ví ShopeePay','Thẻ tín dụng','Khác'];
+const COLORS = ['#8f6c2c','#1f7a5a','#1d4f9a','#7a1f3d','#5b3b8c','#2f6f7a','#9a4a1d','#3d5a2a','#6b6f78','#a0303a'];
+const ICON = {}; for (const t in CATS) for (const [c, e] of CATS[t]) ICON[t + c] = e;
+const THEMES = [['gold','Vàng đen'],['platinum','Bạch kim'],['emerald','Lục bảo'],['ruby','Hồng ngọc'],['sapphire','Lam ngọc']];
+const TBG = {gold:'linear-gradient(140deg,#2a2a2f,#0e0e10)',platinum:'linear-gradient(140deg,#5a5f69,#17181b)',emerald:'linear-gradient(140deg,#13594a,#061c18)',ruby:'linear-gradient(140deg,#6b1428,#21050c)',sapphire:'linear-gradient(140deg,#1d3f8a,#081332)'};
+
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const today = () => ymd(new Date());
+const money = n => Math.round(n).toLocaleString('vi-VN') + ' ₫';
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fold = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
+const fmt = s => s ? s.split('-').reverse().join('/') : '';
+const WD = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
+const dayLabel = s => { const [y,m,d] = s.split('-').map(Number); const dt = new Date(y, m-1, d);
+  const yd = ymd(new Date(Date.now() - 864e5));
+  return (s === today() ? 'Hôm nay' : s === yd ? 'Hôm qua' : WD[dt.getDay()]) + ', ' + pad(d) + '/' + pad(m) + '/' + y; };
+const ls = { get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } } };
+
+let items = ls.get(KEY, []); if (!Array.isArray(items)) items = [];
+const BRAND = 'Ví yun0213';
+const S = Object.assign({ owner: 'NGUYỄN ANH DŨNG', theme: 'gold', dim: 60, budget: 0, pin: '', pinLen: 4, bio: false, hide: false }, ls.get(KEY + '.s', {}));
+let bgImg = ls.get(KEY + '.bg', '');
+let accs = ls.get(KEY + '.acc', null);
+if (!Array.isArray(accs) || !accs.length) accs = [{ id: 'cash', bank: 'Tiền mặt', name: 'Tiền mặt', last: '', init: 0, color: COLORS[0] }];
+for (const it of items) if (!it.acc) it.acc = 'cash';
+const saveAcc = () => ls.set(KEY + '.acc', accs);
+const accById = id => accs.find(a => a.id === id) || accs[0];
+const initials = a => a.bank === 'Tiền mặt' ? '₫' : a.bank.startsWith('Ví ') ? a.bank.slice(3, 5).toUpperCase() : a.bank.replace(/[^A-Za-zÀ-ỹ0-9 ]/g, '').split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase();
+function accBalance(id) {
+  let b = accById(id).init || 0;
+  for (const it of items) {
+    if (it.type === 'in' && it.acc === id) b += it.amount;
+    else if (it.type === 'out' && it.acc === id) b -= it.amount;
+    else if (it.type === 'tr') { if (it.acc === id) b -= it.amount; if (it.to === id) b += it.amount; }
+  }
+  return b;
+}
+const save = () => { if (!ls.set(KEY, items)) toast('Không lưu được dữ liệu'); };
+const saveS = () => ls.set(KEY + '.s', S);
+const hm = n => S.hide ? '•••••• ₫' : money(n);
+
+let filter = Object.assign({ type: 'all', acc: '', from: '', to: '', preset: 'month' }, ls.get(KEY + '.f', {}));
+let query = '';
+
+function setPreset(p) {
+  const n = new Date(), y = n.getFullYear(), m = n.getMonth();
+  if (p === 'today') { filter.from = filter.to = today(); }
+  else if (p === '7') { filter.from = ymd(new Date(y, m, n.getDate() - 6)); filter.to = today(); }
+  else if (p === 'month') { filter.from = ymd(new Date(y, m, 1)); filter.to = ymd(new Date(y, m + 1, 0)); }
+  else if (p === 'last') { filter.from = ymd(new Date(y, m - 1, 1)); filter.to = ymd(new Date(y, m, 0)); }
+  else if (p === 'year') { filter.from = y + '-01-01'; filter.to = y + '-12-31'; }
+  else { filter.from = ''; filter.to = ''; }
+  filter.preset = p;
+}
+if (filter.preset && filter.preset !== 'custom') setPreset(filter.preset);
+
+/* ---------- Giao diện cá nhân ---------- */
+function applyLook() {
+  document.documentElement.dataset.th = S.theme;
+  const r = document.documentElement.style;
+  r.setProperty('--dim', (S.dim / 100).toFixed(2));
+  r.setProperty('--bgimg', bgImg ? `url("${bgImg}")` : 'none');
+  for (const id of ['owner','spOwner','lkOwner']) $(id).textContent = S.owner || '';
+  $('eyeS').style.display = S.hide ? '' : 'none';
+}
+
+/* ---------- Vẽ màn hình chính ---------- */
+function render() {
+  ls.set(KEY + '.f', filter);
+  let tin = 0, tout = 0;
+  for (const it of items) { if (it.type === 'in') tin += it.amount; else if (it.type === 'out') tout += it.amount; }
+  const total = accs.reduce((s, a) => s + accBalance(a.id), 0);
+  $('balance').textContent = hm(total);
+  $('balLbl').textContent = accs.length > 1 ? 'Tổng số dư ' + accs.length + ' tài khoản' : 'Số dư còn lại';
+  $('accCount').textContent = accs.length + ' tài khoản';
+  $('accList').innerHTML = accs.map(a => { const b = accBalance(a.id); return `<div class="acc" data-a="${esc(a.id)}">
+    <div class="badge" style="background:${esc(a.color)}">${esc(initials(a))}</div>
+    <div class="t"><b>${esc(a.name)}</b><small>${esc([a.name !== a.bank ? a.bank : '', a.last ? '•••• ' + a.last : '', !a.last && a.name === a.bank ? (a.bank === 'Tiền mặt' ? 'Trong ví' : 'Tài khoản') : ''].filter(Boolean).join(' · '))}</small></div>
+    <div class="a ${b < 0 ? 'out' : ''}">${hm(b)}</div></div>`; }).join('');
+  if (filter.acc && !accs.some(a => a.id === filter.acc)) filter.acc = '';
+  $('accF').innerHTML = '<option value="">Tất cả tài khoản</option>' + accs.map(a => `<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
+  $('accF').value = filter.acc;
+  $('totIn').textContent = hm(tin);
+  $('totOut').textContent = hm(tout);
+
+  // Ngân sách tháng
+  const now = new Date(), mKey = ymd(now).slice(0, 7);
+  const spent = items.filter(i => i.type === 'out' && i.date.startsWith(mKey)).reduce((s, i) => s + i.amount, 0);
+  $('budgetCard').hidden = !(S.budget > 0);
+  if (S.budget > 0) {
+    const last = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(), left = last - now.getDate() + 1;
+    const pct = spent / S.budget * 100, remain = S.budget - spent;
+    $('budgetTitle').textContent = 'Ngân sách tháng ' + (now.getMonth() + 1) + '/' + now.getFullYear();
+    $('budgetDays').textContent = 'Còn ' + left + ' ngày';
+    $('bSpent').textContent = money(spent); $('bLimit').textContent = money(S.budget);
+    $('bFill').style.width = Math.min(100, pct).toFixed(1) + '%';
+    $('bMeter').className = 'meter' + (pct > 100 ? ' over' : pct >= 80 ? ' warn' : '');
+    $('bNote').textContent = remain >= 0
+      ? `Còn được chi ${money(remain)}, khoảng ${money(remain / left)} mỗi ngày.`
+      : `Đã vượt ngân sách ${money(-remain)}.`;
+  }
+
+  // Bộ lọc
+  $('from').value = filter.from; $('to').value = filter.to;
+  for (const b of $('seg').children) b.classList.toggle('on', b.dataset.v === filter.type);
+  for (const b of $('pre').children) b.classList.toggle('on', b.dataset.p === filter.preset);
+  const inRange = items.filter(it => (!filter.acc || it.acc === filter.acc || it.to === filter.acc) && (!filter.from || it.date >= filter.from) && (!filter.to || it.date <= filter.to));
+  let pin = 0, pout = 0; const byCat = {}, bySrc = {};
+  for (const it of inRange) {
+    if (it.type === 'in') { pin += it.amount; const k = it.src || it.cat; bySrc[k] = (bySrc[k] || 0) + it.amount; }
+    else if (it.type === 'out') { pout += it.amount; byCat[it.cat] = (byCat[it.cat] || 0) + it.amount; }
+  }
+  $('pIn').textContent = money(pin); $('pOut').textContent = money(pout);
+  $('pDiff').textContent = money(pin - pout);
+  $('pDiff').className = pin - pout < 0 ? 'out' : 'in';
+  const isIn = filter.type === 'in';
+  const rows = Object.entries(isIn ? bySrc : byCat).sort((a, b) => b[1] - a[1]), tot = isIn ? pin : pout;
+  $('cats').innerHTML = rows.length
+    ? `<div class="note" style="margin-top:14px">${isIn ? 'Thu theo nguồn tiền' : 'Chi theo danh mục'}</div>` + rows.slice(0, 8).map(([c, v]) =>
+      `<div class="bar2"><div><span>${isIn ? '💰' : (ICON['out' + c] || '📌')} ${esc(c)}</span><b>${money(v)} · ${Math.round(v / tot * 100)}%</b></div><i><span style="width:${(v / rows[0][1] * 100).toFixed(1)}%"></span></i></div>`).join('')
+    : '';
+
+  renderChart();
+
+  // Danh sách
+  const q = fold(query.trim());
+  const shown = inRange.filter(it => (filter.type === 'all' || it.type === filter.type) && (!q || fold(it.note + ' ' + (it.cat || '') + ' ' + (it.src || '') + ' ' + accById(it.acc).name + (it.to ? ' ' + accById(it.to).name : '')).includes(q)))
+    .sort((a, b) => b.date.localeCompare(a.date) || b.ts - a.ts);
+  const titles = { all: 'Giao dịch', out: 'Khoản chi', in: 'Khoản thu' };
+  const range = filter.from || filter.to ? ` (${fmt(filter.from) || '…'} – ${fmt(filter.to) || '…'})` : '';
+  $('listTitle').textContent = titles[filter.type] + range + ' · ' + shown.length;
+  if (!shown.length) {
+    $('list').innerHTML = `<div class="empty">${!items.length ? 'Chưa có giao dịch. Bấm “+ Thêm” để ghi khoản đầu tiên.' : q ? 'Không tìm thấy giao dịch phù hợp.' : 'Không có giao dịch nào trong khoảng này.'}</div>`;
+    return;
+  }
+  const groups = {};
+  for (const it of shown) (groups[it.date] = groups[it.date] || []).push(it);
+  $('list').innerHTML = Object.keys(groups).map(d => {
+    const g = groups[d]; const net = g.reduce((s, it) => s + (it.type === 'in' ? it.amount : it.type === 'out' ? -it.amount : 0), 0);
+    return `<div class="day"><span>${dayLabel(d)}</span><span>${net >= 0 ? '+' : '−'}${money(Math.abs(net))}</span></div>` +
+      g.map(it => it.type === 'tr' ? `<div class="item" data-id="${esc(it.id)}">
+        <div class="ic tr">🔁</div>
+        <div class="t"><b>${esc(it.note || 'Chuyển tiền')}</b><small>${esc(accById(it.acc).name)} → ${esc(accById(it.to).name)}</small></div>
+        <div class="a tr">${money(it.amount)}</div></div>` : `<div class="item" data-id="${esc(it.id)}">
+        <div class="ic ${it.type}">${ICON[it.type + it.cat] || (it.type === 'in' ? '💰' : '📌')}</div>
+        <div class="t"><b>${esc(it.note || it.cat)}</b><small>${esc(it.cat)} · ${esc(accById(it.acc).name)}${it.src ? ' · từ ' + esc(it.src) : ''}</small></div>
+        <div class="a ${it.type}">${it.type === 'in' ? '+' : '−'}${money(it.amount)}</div></div>`).join('');
+  }).join('');
+}
+
+let chartSel = 5;
+function renderChart() {
+  const now = new Date(), months = [];
+  for (let k = 5; k >= 0; k--) { const d = new Date(now.getFullYear(), now.getMonth() - k, 1); months.push({ key: ymd(d).slice(0, 7), m: d.getMonth() + 1, y: d.getFullYear(), i: 0, o: 0 }); }
+  const idx = Object.fromEntries(months.map((m, i) => [m.key, i]));
+  for (const it of items) { const j = idx[it.date.slice(0, 7)]; if (j != null) { if (it.type === 'in') months[j].i += it.amount; else if (it.type === 'out') months[j].o += it.amount; } }
+  const max = Math.max(1, ...months.map(m => Math.max(m.i, m.o)));
+  $('chart').innerHTML = months.map((m, j) => `<div class="col${j === chartSel ? ' on' : ''}" data-j="${j}">
+    <div class="bars"><i class="bi" style="height:${(m.i / max * 100).toFixed(1)}%"></i><i class="bo" style="height:${(m.o / max * 100).toFixed(1)}%"></i></div>
+    <small>T${m.m}</small></div>`).join('');
+  const s = months[chartSel];
+  $('legend').innerHTML = `<span>Tháng ${s.m}/${s.y}:</span><span><i class="dot" style="background:var(--in)"></i>Thu <b>${money(s.i)}</b></span><span><i class="dot" style="background:var(--out)"></i>Chi <b>${money(s.o)}</b></span>`;
+}
+$('chart').onclick = e => { const c = e.target.closest('.col'); if (c) { chartSel = +c.dataset.j; renderChart(); } };
+
+/* ---------- Bộ lọc & tìm kiếm ---------- */
+$('seg').onclick = e => { const b = e.target.closest('button'); if (b) { filter.type = b.dataset.v; render(); } };
+$('pre').onclick = e => { const b = e.target.closest('button'); if (b) { setPreset(b.dataset.p); render(); } };
+$('from').onchange = () => { filter.from = $('from').value; filter.preset = 'custom'; if (filter.to && filter.from > filter.to) filter.to = filter.from; render(); };
+$('to').onchange = () => { filter.to = $('to').value; filter.preset = 'custom'; if (filter.from && filter.from > filter.to) filter.from = filter.to; render(); };
+$('accF').onchange = () => { filter.acc = $('accF').value; render(); };
+$('q').oninput = () => { query = $('q').value; render(); };
+$('eyeBtn').onclick = () => { S.hide = !S.hide; saveS(); applyLook(); render(); };
+
+/* ---------- Thêm / sửa ---------- */
+let editing = null, ftype = 'out', fcat = '', facc = 'cash', fto = '';
+const accChips = (sel, skip) => accs.filter(a => a.id !== skip).map(a => `<button type="button" class="${a.id === sel ? 'on' : ''}" data-a="${esc(a.id)}"><i style="background:${esc(a.color)}"></i>${esc(a.name)}</button>`).join('');
+function drawCats() {
+  if (!accs.some(a => a.id === facc)) facc = accs[0].id;
+  if (ftype === 'tr' && (!fto || fto === facc || !accs.some(a => a.id === fto))) fto = (accs.find(a => a.id !== facc) || {}).id || '';
+  $('accLbl').textContent = ftype === 'in' ? 'Nhận vào' : ftype === 'tr' ? 'Chuyển từ' : 'Trả bằng';
+  $('accPick').innerHTML = accChips(facc);
+  $('toPick').innerHTML = fto ? accChips(fto, facc) : '<span class="note">Cần ít nhất 2 tài khoản để chuyển tiền.</span>';
+  $('toRow').hidden = ftype !== 'tr'; $('catRow').hidden = ftype === 'tr';
+  for (const b of $('typ').children) b.classList.toggle('on', b.dataset.t === ftype);
+  $('srcRow').hidden = ftype !== 'in';
+  if (ftype === 'tr') return;
+  const list = CATS[ftype].map(c => c[0]);
+  if (!list.includes(fcat)) fcat = list[0];
+  $('catPick').innerHTML = CATS[ftype].map(([c, e]) => `<button type="button" class="${c === fcat ? 'on' : ''}" data-c="${esc(c)}">${e} ${esc(c)}</button>`).join('');
+}
+function openForm(it) {
+  editing = it || null;
+  ftype = it ? it.type : (filter.type === 'in' ? 'in' : 'out');
+  fcat = it ? it.cat : '';
+  facc = it ? it.acc : (filter.acc || ls.get(KEY + '.lastAcc', 'cash'));
+  fto = it && it.to ? it.to : '';
+  $('amt').value = it ? it.amount.toLocaleString('vi-VN') : '';
+  $('note').value = it ? it.note : '';
+  $('src').value = it ? (it.src || '') : '';
+  const srcs = [...new Set(items.filter(i => i.src).sort((a, b) => b.ts - a.ts).map(i => i.src))].slice(0, 30);
+  $('srcList').innerHTML = srcs.map(s => `<option value="${esc(s)}">`).join('');
+  $('date').value = it ? it.date : today();
+  $('formTitle').textContent = it ? 'Sửa giao dịch' : 'Thêm giao dịch';
+  $('delBtn').style.visibility = it ? 'visible' : 'hidden';
+  drawCats();
+  $('formMask').classList.add('show');
+  if (!it) setTimeout(() => $('amt').focus(), 150);
+}
+const closeAll = () => document.querySelectorAll('.mask').forEach(m => m.classList.remove('show'));
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = closeAll);
+document.querySelectorAll('.mask').forEach(m => m.onclick = e => { if (e.target === m) closeAll(); });
+const numFmt = el => { const n = parseInt(el.value.replace(/\D/g, '') || '0', 10); el.value = n ? n.toLocaleString('vi-VN') : ''; return n; };
+
+$('typ').onclick = e => { const b = e.target.closest('button'); if (b) { ftype = b.dataset.t; drawCats(); } };
+$('accPick').onclick = e => { const b = e.target.closest('button'); if (b) { facc = b.dataset.a; drawCats(); } };
+$('toPick').onclick = e => { const b = e.target.closest('button'); if (b) { fto = b.dataset.a; drawCats(); } };
+$('catPick').onclick = e => { const b = e.target.closest('button'); if (b) { fcat = b.dataset.c; drawCats(); } };
+$('amt').oninput = () => numFmt($('amt'));
+$('addBtn').onclick = () => openForm();
+$('list').onclick = e => { const r = e.target.closest('.item'); if (r) openForm(items.find(i => i.id === r.dataset.id)); };
+
+$('form').onsubmit = e => {
+  e.preventDefault();
+  const amount = parseInt($('amt').value.replace(/\D/g, '') || '0', 10);
+  if (!amount) { $('amt').focus(); toast('Nhập số tiền'); return; }
+  if (ftype === 'tr' && (!fto || fto === facc)) { toast('Chọn tài khoản nhận'); return; }
+  const data = { type: ftype, amount, acc: facc, to: ftype === 'tr' ? fto : '', cat: ftype === 'tr' ? '' : fcat, note: $('note').value.trim(), src: ftype === 'in' ? $('src').value.trim() : '', date: $('date').value || today() };
+  if (ftype !== 'tr') ls.set(KEY + '.lastAcc', facc);
+  const was = editing;
+  if (editing) Object.assign(editing, data);
+  else items.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ts: Date.now(), ...data });
+  save(); closeAll(); render();
+  toast(was ? 'Đã sửa' : (ftype === 'in' ? 'Đã ghi tiền vào ' : ftype === 'tr' ? 'Đã chuyển ' : 'Đã ghi chi ') + money(amount));
+};
+
+let lastDeleted = null;
+$('delBtn').onclick = () => {
+  if (!editing) return;
+  lastDeleted = editing; items = items.filter(i => i !== editing);
+  save(); closeAll(); render(); toast('Đã xóa giao dịch', true);
+};
+$('undoBtn').onclick = () => { if (lastDeleted) { items.push(lastDeleted); lastDeleted = null; save(); render(); } $('toast').classList.remove('show'); };
+
+/* ---------- Tài khoản ---------- */
+let accEdit = null;
+$('aBank').innerHTML = BANKS.map(b => `<option>${esc(b)}</option>`).join('');
+function openAcc(a) {
+  accEdit = a || null;
+  $('accTitle').textContent = a ? 'Sửa tài khoản' : 'Thêm tài khoản';
+  $('aBank').value = a ? (BANKS.includes(a.bank) ? a.bank : 'Khác') : 'Vietcombank';
+  $('aName').value = a ? a.name : '';
+  $('aName').placeholder = a ? '' : 'Ví dụ: ' + $('aBank').value;
+  $('aLast').value = a ? a.last : '';
+  const b = a ? accBalance(a.id) : 0;
+  $('aBal').value = b ? Math.abs(b).toLocaleString('vi-VN') : '';
+  $('aBalLbl').firstChild.textContent = a ? 'Số dư thực tế (₫)' : 'Số dư hiện tại (₫)';
+  $('aHint').textContent = a ? 'Nếu số dư lệch với app ngân hàng, nhập số dư đúng vào đây. App sẽ cân lại, không tạo khoản thu chi mới.' : 'Xem số dư trong app ngân hàng rồi nhập vào đây. Từ giờ app tự cộng trừ theo các khoản thu chi.';
+  $('aDel').style.visibility = a && accs.length > 1 ? 'visible' : 'hidden';
+  $('accMask').classList.add('show');
+}
+$('accAdd').onclick = () => openAcc();
+$('accList').onclick = e => { const r = e.target.closest('.acc'); if (r) openAcc(accById(r.dataset.a)); };
+$('aBank').onchange = () => { if (!accEdit) $('aName').placeholder = 'Ví dụ: ' + $('aBank').value; };
+$('aBal').oninput = () => numFmt($('aBal'));
+$('aLast').oninput = () => { $('aLast').value = $('aLast').value.replace(/\D/g, '').slice(0, 4); };
+$('accForm').onsubmit = e => {
+  e.preventDefault();
+  const bank = $('aBank').value, name = $('aName').value.trim() || bank, last = $('aLast').value;
+  const bal = parseInt($('aBal').value.replace(/\D/g, '') || '0', 10);
+  if (accEdit) {
+    const diff = bal - accBalance(accEdit.id);
+    Object.assign(accEdit, { bank, name, last, init: (accEdit.init || 0) + diff });
+    toast(diff ? 'Đã cân lại số dư ' + name : 'Đã lưu ' + name);
+  } else {
+    accs.push({ id: 'a' + Date.now().toString(36), bank, name, last, init: bal, color: COLORS[accs.length % COLORS.length] });
+    toast('Đã thêm ' + name);
+  }
+  saveAcc(); closeAll(); render();
+};
+$('aDel').onclick = () => {
+  if (!accEdit || accs.length < 2) return;
+  if (items.some(i => i.acc === accEdit.id || i.to === accEdit.id)) { toast('Tài khoản còn giao dịch, chưa xóa được'); return; }
+  accs = accs.filter(a => a !== accEdit); saveAcc(); closeAll(); render(); toast('Đã xóa tài khoản');
+};
+
+let tt;
+function toast(msg, undo) {
+  $('toastMsg').textContent = msg; $('undoBtn').style.display = undo ? '' : 'none';
+  $('toast').classList.add('show'); clearTimeout(tt); tt = setTimeout(() => $('toast').classList.remove('show'), undo ? 5000 : 2200);
+}
+
+/* ---------- Cài đặt ---------- */
+function drawSettings() {
+  $('sOwner').value = S.owner;
+  $('sw').innerHTML = THEMES.map(([k, n]) => `<div><button class="${k === S.theme ? 'on' : ''}" data-th="${k}" style="background:${TBG[k]}" aria-label="${n}"></button><span>${n}</span></div>`).join('');
+  $('bgDim').value = S.dim;
+  $('bgPrev').style.backgroundImage = bgImg ? `url("${bgImg}")` : '';
+  $('bgPrev').textContent = bgImg ? '' : 'Chưa chọn hình nền';
+  $('sBudget').value = S.budget ? S.budget.toLocaleString('vi-VN') : '';
+  $('pinState').textContent = 'App luôn hỏi mật khẩu khi mở, và khi quay lại sau hơn 30 giây.' + (BIO ? (S.bio ? ' Đang bật mở bằng vân tay.' : ' Có thể bật mở bằng vân tay.') : '');
+  $('bioToggle').hidden = !BIO; $('secRow').style.gridTemplateColumns = BIO ? '' : '1fr';
+  $('bioToggle').textContent = S.bio ? 'Tắt vân tay' : 'Bật vân tay';
+}
+$('setBtn').onclick = () => { drawSettings(); $('setMask').classList.add('show'); };
+$('sOwner').oninput = () => { S.owner = $('sOwner').value.trim(); saveS(); applyLook(); };
+$('sw').onclick = e => { const b = e.target.closest('button'); if (b) { S.theme = b.dataset.th; saveS(); applyLook(); drawSettings(); } };
+$('bgDim').oninput = () => { S.dim = +$('bgDim').value; saveS(); applyLook(); };
+$('sBudget').oninput = () => { S.budget = numFmt($('sBudget')); saveS(); render(); };
+$('bgPick').onclick = () => $('bgFile').click();
+$('bgClear').onclick = () => { bgImg = ''; try { localStorage.removeItem(KEY + '.bg'); } catch (e) {} applyLook(); drawSettings(); };
+$('bgFile').onchange = () => {
+  const f = $('bgFile').files[0]; if (!f) return;
+  const url = URL.createObjectURL(f), img = new Image();
+  img.onload = () => {
+    const k = Math.min(1, 1280 / Math.max(img.width, img.height));
+    const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    URL.revokeObjectURL(url);
+    let data = c.toDataURL('image/jpeg', .82);
+    if (!ls.set(KEY + '.bg', data)) { data = c.toDataURL('image/jpeg', .6); if (!ls.set(KEY + '.bg', data)) { toast('Ảnh quá lớn, hãy chọn ảnh khác'); return; } }
+    bgImg = data; applyLook(); drawSettings(); toast('Đã đổi hình nền');
+  };
+  img.onerror = () => toast('Không đọc được ảnh này');
+  img.src = url; $('bgFile').value = '';
+};
+
+/* ---------- Mật khẩu đăng nhập ---------- */
+const hash = s => { let h = 5381; for (const ch of 'vr:' + s) h = (h * 33 + ch.charCodeAt(0)) >>> 0; return h.toString(36); };
+const NEWLEN = 6;                                  // mật khẩu mới: 6 số
+let pinMode = 'unlock', pinBuf = '', pinFirst = '', pinLen = 6;
+let fails = ls.get(KEY + '.fail', { n: 0, until: 0 }), lockTimer = null;
+const MSG = { unlock: 'Nhập mật khẩu để mở ví', verify: 'Nhập mật khẩu hiện tại', set1: 'Tạo mật khẩu 6 số để bảo vệ ví', set2: 'Nhập lại mật khẩu để xác nhận' };
+function showLock(mode) {
+  pinMode = mode; pinBuf = ''; pinFirst = '';
+  pinLen = (mode === 'unlock' || mode === 'verify') ? (S.pinLen || 4) : NEWLEN;
+  $('dots').innerHTML = '<i></i>'.repeat(pinLen);
+  $('lockMsg').textContent = MSG[mode];
+  $('padCancel').style.visibility = mode === 'verify' || (mode !== 'unlock' && S.pin) ? 'visible' : 'hidden';
+  $('forgot').hidden = !(mode === 'unlock' || mode === 'verify'); $('forgotMsg').hidden = true;
+  const useBio = mode === 'unlock' && S.bio && BIO;
+  $('bioBtn').hidden = !useBio;
+  drawDots(); $('lock').classList.add('show'); checkWait();
+  if (useBio) setTimeout(askBio, 500);
+}
+const BIO = (() => { try { return !!(window.Android && Android.bioAvailable && Android.bioAvailable()); } catch (e) { return false; } })();
+let bioPurpose = 'unlock';
+function askBio() { if (!BIO) return; bioPurpose = 'unlock'; try { Android.bioAuth(); } catch (e) {} }
+window.onBioResult = ok => {
+  if (bioPurpose === 'enable') {
+    bioPurpose = 'unlock';
+    if (ok) { S.bio = true; saveS(); toast('Đã bật mở bằng vân tay'); } else toast('Chưa bật vân tay');
+    drawSettings(); return;
+  }
+  if (ok && pinMode === 'unlock' && $('lock').classList.contains('show')) { passOK(); clearInterval(lockTimer); $('lock').classList.remove('show'); pinBuf = ''; }
+};
+$('bioBtn').onclick = askBio;
+$('bioToggle').onclick = () => {
+  if (S.bio) { S.bio = false; saveS(); drawSettings(); toast('Đã tắt mở bằng vân tay'); return; }
+  bioPurpose = 'enable'; try { Android.bioAuth(); } catch (e) { toast('Máy không hỗ trợ vân tay'); }
+};
+function drawDots() { [...$('dots').children].forEach((d, i) => d.classList.toggle('f', i < pinBuf.length)); }
+function pinErr(msg) { $('lockMsg').textContent = msg; const d = $('dots'); d.classList.remove('err'); void d.offsetWidth; d.classList.add('err'); pinBuf = ''; drawDots(); }
+function checkWait() {
+  clearInterval(lockTimer);
+  const tick = () => { const s = Math.ceil((fails.until - Date.now()) / 1000);
+    if (s > 0) $('lockMsg').textContent = 'Sai quá 5 lần. Thử lại sau ' + s + ' giây';
+    else { clearInterval(lockTimer); if (fails.until) { fails.until = 0; ls.set(KEY + '.fail', fails); $('lockMsg').textContent = MSG[pinMode]; } } };
+  if (fails.until > Date.now()) { tick(); lockTimer = setInterval(tick, 1000); }
+}
+function wrong() {
+  fails.n++;
+  if (fails.n >= 5) { fails.n = 0; fails.until = Date.now() + 30000; ls.set(KEY + '.fail', fails); pinErr(''); checkWait(); }
+  else { ls.set(KEY + '.fail', fails); pinErr('Sai mật khẩu, còn ' + (5 - fails.n) + ' lần thử'); }
+}
+function passOK() { fails = { n: 0, until: 0 }; ls.set(KEY + '.fail', fails); }
+$('pad').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const k = b.dataset.k;
+  if (k === 'cancel') { $('lock').classList.remove('show'); return; }
+  if (fails.until > Date.now()) return;
+  if (k === 'del') { pinBuf = pinBuf.slice(0, -1); drawDots(); return; }
+  if (pinBuf.length >= pinLen) return;
+  pinBuf += b.textContent; drawDots();
+  if (pinBuf.length < pinLen) return;
+  setTimeout(() => {
+    if (pinMode === 'unlock') {
+      if (hash(pinBuf) === S.pin) { passOK(); $('lock').classList.remove('show'); pinBuf = ''; } else wrong();
+    } else if (pinMode === 'verify') {
+      if (hash(pinBuf) === S.pin) { passOK(); showLock('set1'); } else wrong();
+    } else if (pinMode === 'set1') {
+      if (/^(\d)\1+$/.test(pinBuf) || '0123456789'.includes(pinBuf) || '9876543210'.includes(pinBuf)) { pinErr('Mật khẩu quá dễ đoán, chọn số khác'); return; }
+      pinFirst = pinBuf; pinBuf = ''; pinMode = 'set2'; $('lockMsg').textContent = MSG.set2; drawDots();
+    } else if (pinMode === 'set2') {
+      if (pinBuf === pinFirst) { const first = !S.pin; S.pin = hash(pinBuf); S.pinLen = NEWLEN; saveS(); $('lock').classList.remove('show'); drawSettings(); toast(first ? 'Đã tạo mật khẩu. Hãy ghi nhớ!' : 'Đã đổi mật khẩu'); }
+      else { pinMode = 'set1'; pinErr('Hai lần không khớp, tạo lại'); }
+    }
+  }, 120);
+};
+$('forgot').onclick = () => { $('forgotMsg').hidden = false; };
+$('pinSet').onclick = () => showLock('verify');
+let pausedAt = 0;
+window.onAppPause = () => { pausedAt = Date.now(); };
+window.onAppResume = () => { if (S.pin && pausedAt && Date.now() - pausedAt > 30000 && !$('lock').classList.contains('show')) showLock('unlock'); pausedAt = 0; };
+document.addEventListener('visibilitychange', () => document.hidden ? window.onAppPause() : window.onAppResume());
+
+/* ---------- Sao lưu ---------- */
+$('bkOpen').onclick = () => { closeAll(); $('bkText').value = ''; $('bkMask').classList.add('show'); };
+const backupText = () => JSON.stringify({ app: 'yun0213', v: 3, at: new Date().toISOString(), settings: { owner: S.owner, theme: S.theme, budget: S.budget }, accounts: accs, items });
+$('shareBtn').onclick = () => {
+  const txt = backupText();
+  if (window.Android && Android.share) Android.share(txt, 'Sao lưu ' + BRAND + ' ' + fmt(today()));
+  else { $('bkText').value = txt; toast('Đã hiện bản sao lưu bên dưới, bấm Chép'); }
+};
+$('copyBtn').onclick = async () => {
+  const txt = $('bkText').value || backupText(); $('bkText').value = txt;
+  try { if (window.Android && Android.copy) Android.copy(txt); else await navigator.clipboard.writeText(txt); toast('Đã chép'); }
+  catch (e) { $('bkText').select(); toast('Hãy giữ ô chữ để chép'); }
+};
+$('restoreBtn').onclick = () => {
+  try {
+    const d = JSON.parse($('bkText').value);
+    const list = Array.isArray(d) ? d : d.items;
+    if (!Array.isArray(list)) throw 0;
+    const clean = list.filter(i => i && (i.type === 'in' || i.type === 'out' || (i.type === 'tr' && i.to)) && Number(i.amount) > 0 && /^\d{4}-\d\d-\d\d$/.test(i.date))
+      .map(i => ({ id: String(i.id || Math.random().toString(36).slice(2)), ts: Number(i.ts) || 0, type: i.type, acc: String(i.acc || 'cash'), to: String(i.to || ''), amount: Math.round(Number(i.amount)), cat: i.type === 'tr' ? '' : String(i.cat || 'Khác'), note: String(i.note || ''), src: String(i.src || '').slice(0, 40), date: i.date }));
+    const ids = new Set(items.map(i => i.id)); let added = 0;
+    for (const i of clean) if (!ids.has(i.id)) { items.push(i); added++; }
+    if (Array.isArray(d.accounts)) {
+      for (const a of d.accounts) if (a && a.id && !accs.some(x => x.id === String(a.id)))
+        accs.push({ id: String(a.id), bank: String(a.bank || 'Khác'), name: String(a.name || 'Tài khoản').slice(0, 30), last: String(a.last || '').replace(/\D/g, '').slice(0, 4), init: Math.round(Number(a.init) || 0), color: /^#[0-9a-fA-F]{6}$/.test(a.color) ? a.color : COLORS[0] });
+      saveAcc();
+    }
+    const st = d.settings;
+    if (st && typeof st === 'object') {
+      if (typeof st.owner === 'string') S.owner = st.owner.slice(0, 28);
+      if (THEMES.some(t => t[0] === st.theme)) S.theme = st.theme;
+      if (Number(st.budget) >= 0) S.budget = Math.round(Number(st.budget));
+      saveS(); applyLook();
+    }
+    save(); closeAll(); render(); toast('Đã khôi phục ' + added + ' giao dịch');
+  } catch (e) { toast('Bản sao lưu không hợp lệ'); }
+};
+
+window.onAndroidBack = () => {
+  if ($('lock').classList.contains('show')) return (pinMode === 'unlock' || !S.pin) ? false : ($('lock').classList.remove('show'), true);
+  const open = document.querySelector('.mask.show'); if (open) { closeAll(); return true; } return false;
+};
+
+/* ---------- Khởi động ---------- */
+let VER = ''; try { if (window.Android && Android.version) VER = Android.version(); } catch (e) {}
+document.querySelectorAll('.ver').forEach(el => el.textContent = VER ? 'Ví yun0213 · phiên bản ' + VER : '');
+applyLook(); render();
+showLock(S.pin ? 'unlock' : 'set1');
+setTimeout(() => { $('splash').classList.add('fade'); setTimeout(() => $('splash').classList.remove('show'), 380); }, 1100);
+}
+</script>
+</body>
+</html>
